@@ -27,6 +27,9 @@ def main():
             '''insert into eventi values (NULL, ?, ?, ?, ?, NULL, ?, ?)''', row
         )
 
+    conn.commit()
+    conn.close()
+
 
 if  __name__ == "__main__":
     main()
