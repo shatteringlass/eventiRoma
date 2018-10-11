@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
 
-def gen_cal():
+
+def gen_cal(cal_file='eventi_roma.ics', db='eventi.db'):
 
     import icalendar as ics
     import datetime as dt
-
-    OUTPUT = 'eventi_roma.ics'
-    WEBSITENAME = 'www.romeguide.it'
-    db = 'eventi.db'
 
     cal = ics.Calendar()
 
@@ -17,12 +14,13 @@ def gen_cal():
 
     # calendar preparation...
 
-    cal.add("prodid", "-//Mostre ed eventi a Roma //" + WEBSITENAME + "//")
+    cal.add("prodid", "-//Mostre ed eventi a Roma // www.romeguide.it //")
     cal.add("version", "2.0")
 
     # query database
 
-    sql = "SELECT * FROM eventi where strftime('%s',added_datetime) > {}".format(lastruntime)
+    sql = "SELECT * FROM eventi where strftime('%s',added_datetime) > {}".format(
+        lastruntime)
 
     import query_db as qdb
 
@@ -30,17 +28,20 @@ def gen_cal():
     for record in records:
         event = ics.Event()
         event.add("summary", record[1])
-        event.add("dtstart", dt.date.fromtimestamp(dt.datetime.strptime(record[3], "%Y-%m-%d %H:%M:%S").timestamp()))
-        event.add("dtend", dt.date.fromtimestamp(dt.datetime.strptime(record[4], "%Y-%m-%d %H:%M:%S").timestamp()))
-        event.add("dtstamp", dt.date.fromtimestamp(dt.datetime.strptime(record[6], "%Y-%m-%d %H:%M:%S.%f").timestamp()))
+        event.add("dtstart", dt.date.fromtimestamp(
+            dt.datetime.strptime(record[3], "%Y-%m-%d %H:%M:%S").timestamp()))
+        event.add("dtend", dt.date.fromtimestamp(
+            dt.datetime.strptime(record[4], "%Y-%m-%d %H:%M:%S").timestamp()))
+        event.add("dtstamp", dt.date.fromtimestamp(
+            dt.datetime.strptime(record[6], "%Y-%m-%d %H:%M:%S.%f").timestamp()))
         event.add("location", record[2])
         cal.add_component(event)
 
-    f = open(OUTPUT, 'wb')
+    f = open(cal_file, 'wb')
     f.write(cal.to_ical())
     f.close
 
-    lastruntime = dt.date.strftime(dt.datetime.now(),'%s')
+    lastruntime = dt.date.strftime(dt.datetime.now(), '%s')
 
     f = open('last_run', 'r+')
     f.truncate(0)

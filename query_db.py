@@ -9,8 +9,3 @@ def fetch(db, sql):
     c.execute(sql)
 
     return c
-
-
-
-if __name__ == "__main__":
-    fetch()

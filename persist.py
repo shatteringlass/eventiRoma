@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 
-def main():
-    import scraper
+def persist(eventi, dbfile='eventi.db'):
     import sqlite3 as sl3
     import datetime as dt
 
-    eventi = scraper.main()
-
-    conn = sl3.connect('eventi.db')
+    conn = sl3.connect(dbfile)
     c = conn.cursor()
-
-    c.execute('''create table if not exists eventi
+    crt_statement = '''create table if not exists eventi
     (id integer not null primary key autoincrement, event_name text not null, location text, start_date text,
-     end_date text, url text, scrape_datetime text, added_datetime text)''')
+     end_date text, url text, scrape_datetime text, added_datetime text)'''
+
+    c.execute(crt_statement)
+    conn.commit()
+
 
     for e in eventi:
         row = [
@@ -29,7 +29,3 @@ def main():
 
     conn.commit()
     conn.close()
-
-
-if  __name__ == "__main__":
-    main()
